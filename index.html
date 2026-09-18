@@ -1090,7 +1090,7 @@ function App() {
         <label className="text-xs font-medium text-slate-500">Nama Kepala Keluarga</label>
         <input value={wargaForm.namaKK} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { namaKK: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2">
         <div>
           <label className="text-xs font-medium text-slate-500">RT</label>
           <input value={wargaForm.rt} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { rt: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
@@ -1156,7 +1156,7 @@ function App() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2">
         <div>
           <label className="text-xs font-medium text-slate-500">Kriteria Rumah</label>
           <select value={wargaForm.kriteriaRumah} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { kriteriaRumah: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm">
@@ -1217,7 +1217,7 @@ function App() {
 
   const renderWargaDetail = (w) => (
     <>
-      <div className="grid grid-cols-2 gap-3 text-sm">
+      <div className="grid grid-cols-2 gap-2 text-sm">
         <div><p className="text-xs text-slate-400">RT</p><p className="font-medium text-slate-700">{w.rt}</p></div>
         <div><p className="text-xs text-slate-400">Alamat</p><p className="font-medium text-slate-700">{w.alamat}</p></div>
         <div><p className="text-xs text-slate-400">Kriteria Rumah</p><p className="font-medium text-slate-700">{w.kriteriaRumah}</p></div>
@@ -1272,14 +1272,14 @@ function App() {
               <input type="password" value={loginForm.password} onChange={function (e) { setLoginForm(Object.assign({}, loginForm, { password: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
             </div>
             <button onClick={handleLogin} className="w-full bg-rose-600 text-white font-semibold py-3 rounded-xl mt-2 active:scale-95 transition-transform">Masuk</button>
-            <div className="bg-slate-50 rounded-xl p-3 mt-3">
+            <div className="bg-slate-50 rounded-xl p-3 mt-2">
               <p className="text-xs text-slate-500 font-medium mb-1">Login pertama:</p>
               <p className="text-xs text-slate-400">pengurus / pengurus123</p>
               <p className="text-xs text-slate-400 mt-1">Akun anggota dibuat oleh pengurus (menu Pengaturan setelah login).</p>
             </div>
           </div>
           {toast && (
-            <div className={'mt-3 px-3 py-2 rounded-xl text-xs font-medium text-white ' + (toast.type === 'error' ? 'bg-red-600' : 'bg-emerald-600')}>{toast.message}</div>
+            <div className={'mt-2 px-3 py-2 rounded-xl text-xs font-medium text-white ' + (toast.type === 'error' ? 'bg-red-600' : 'bg-emerald-600')}>{toast.message}</div>
           )}
         </div>
       </div>
@@ -1290,7 +1290,7 @@ function App() {
     <div className="min-h-screen bg-slate-50 flex justify-center">
       <div className="w-full max-w-md bg-slate-50 min-h-screen relative">
 
-        <div className="sticky top-0 z-20 bg-white border-b border-slate-100 px-4 py-3 flex items-center justify-between">
+        <div className="sticky top-0 z-20 bg-white border-b border-slate-100 px-3 py-2 flex items-center justify-between">
           <div>
             <h1 className="font-bold text-slate-800 text-base">{pageTitles[page]}</h1>
             <span className={'text-xs font-medium px-2 py-0.5 rounded-full inline-block mt-0.5 ' + (role === 'pengurus' ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-600')}>
@@ -1308,12 +1308,12 @@ function App() {
         </div>
 
         {toast && (
-          <div className={'fixed top-3 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-xl text-xs font-medium text-white shadow-lg flex items-center gap-2 ' + (toast.type === 'error' ? 'bg-red-600' : 'bg-slate-800')}>
+          <div className={'fixed top-3 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-xl text-xs font-medium text-white shadow-lg flex items-center gap-2 ' + (toast.type === 'error' ? 'bg-red-600' : 'bg-slate-800')}>
             <IconCheckCircle className="w-3.5 h-3.5" />{toast.message}
           </div>
         )}
 
-        <main className={'px-4 pt-4 space-y-4 ' + (page === 'chat' ? 'pb-40' : 'pb-24')}>
+        <main className={'px-3 pt-3 space-y-2.5 ' + (page === 'chat' ? 'pb-40' : 'pb-20')}>
 
           {page === 'dashboard' && (
             <>
@@ -1325,11 +1325,11 @@ function App() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 {dashboardStatCards.map(function (c, i) {
                   const IconComp = c.icon;
                   return (
-                    <button key={i} onClick={function () { setPage(c.page); }} className="bg-white rounded-2xl p-4 border border-slate-100 text-left active:bg-slate-50">
+                    <button key={i} onClick={function () { setPage(c.page); }} className="bg-white rounded-2xl p-3 border border-slate-100 text-left active:bg-slate-50">
                       <div className={'w-9 h-9 rounded-xl ' + c.bg + ' flex items-center justify-center mb-2'}>
                         <IconComp className={'w-4 h-4 ' + c.text} />
                       </div>
@@ -1341,8 +1341,8 @@ function App() {
               </div>
 
               {role === 'pengurus' && (
-                <div className="bg-white rounded-2xl p-4 border border-slate-100">
-                  <p className="text-sm font-semibold text-slate-700 mb-3">Data Kesehatan & Kependudukan</p>
+                <div className="bg-white rounded-2xl p-3 border border-slate-100">
+                  <p className="text-sm font-semibold text-slate-700 mb-2">Data Kesehatan & Kependudukan</p>
                   <div className="grid grid-cols-3 gap-3">
                     {[['Balita', totalBalita], ['PUS', totalPus], ['WUS', totalWus], ['Ibu Hamil', totalBumil], ['Ibu Menyusui', totalBusui], ['Lansia', totalLansia]].map(function (pair) {
                       return (
@@ -1357,11 +1357,11 @@ function App() {
               )}
 
               {tagihanBulanIniNotif.length > 0 && (
-                <div className="bg-white rounded-2xl p-4 border border-slate-100">
-                  <p className="text-sm font-semibold text-slate-700 mb-3">Tagihan Bulan Ini</p>
+                <div className="bg-white rounded-2xl p-3 border border-slate-100">
+                  <p className="text-sm font-semibold text-slate-700 mb-2">Tagihan Bulan Ini</p>
                   {tagihanBulanIniNotif.map(function (n) {
                     return (
-                      <button key={n.id} onClick={function () { goToTagihanPembayaran(n); }} className="w-full flex items-center gap-3 py-2 border-b border-slate-50 last:border-0 text-left">
+                      <button key={n.id} onClick={function () { goToTagihanPembayaran(n); }} className="w-full flex items-center gap-3 py-1.5 border-b border-slate-50 last:border-0 text-left">
                         <div className="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center shrink-0">
                           <IconWallet className="w-4 h-4 text-rose-600" />
                         </div>
@@ -1377,8 +1377,8 @@ function App() {
               )}
 
               {pengumumanTerbaru.length > 0 && (
-                <div className="bg-white rounded-2xl p-4 border border-slate-100">
-                  <div className="flex justify-between items-center mb-3">
+                <div className="bg-white rounded-2xl p-3 border border-slate-100">
+                  <div className="flex justify-between items-center mb-2">
                     <p className="text-sm font-semibold text-slate-700">Pengumuman</p>
                     <button onClick={function () { setPage('notifikasi'); }} className="text-xs text-rose-600 font-medium flex items-center">
                       Lihat semua <IconChevronRight className="w-3 h-3" />
@@ -1386,7 +1386,7 @@ function App() {
                   </div>
                   {pengumumanTerbaru.map(function (n) {
                     return (
-                      <button key={n.id} onClick={function () { setPage('notifikasi'); }} className="w-full flex items-center gap-3 py-2 border-b border-slate-50 last:border-0 text-left">
+                      <button key={n.id} onClick={function () { setPage('notifikasi'); }} className="w-full flex items-center gap-3 py-1.5 border-b border-slate-50 last:border-0 text-left">
                         <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
                           <IconBell className="w-4 h-4 text-blue-600" />
                         </div>
@@ -1400,8 +1400,8 @@ function App() {
                 </div>
               )}
 
-              <div className="bg-white rounded-2xl p-4 border border-slate-100">
-                <div className="flex justify-between items-center mb-3">
+              <div className="bg-white rounded-2xl p-3 border border-slate-100">
+                <div className="flex justify-between items-center mb-2">
                   <p className="text-sm font-semibold text-slate-700">Kegiatan Bulan Ini</p>
                   <button onClick={function () { setPage('kegiatan'); }} className="text-xs text-rose-600 font-medium flex items-center">
                     Lihat semua <IconChevronRight className="w-3 h-3" />
@@ -1411,7 +1411,7 @@ function App() {
                   <p className="text-xs text-slate-400 text-center py-4">Belum ada kegiatan bulan ini</p>
                 ) : kegiatanBulanIniList.map(function (k) {
                   return (
-                    <div key={k.id} className="flex items-center gap-3 py-2 border-b border-slate-50 last:border-0">
+                    <div key={k.id} className="flex items-center gap-3 py-1.5 border-b border-slate-50 last:border-0">
                       <div className="w-10 h-10 rounded-xl bg-amber-50 flex flex-col items-center justify-center shrink-0">
                         <span className="text-xs font-bold text-amber-600 leading-none">{new Date(k.tanggal).getDate()}</span>
                         <span className="text-xs text-amber-500 leading-none">{new Date(k.tanggal).toLocaleDateString('id-ID', { month: 'short' })}</span>
@@ -1516,11 +1516,11 @@ function App() {
                   <div className="text-center py-10 text-slate-400 text-sm">Belum ada data warga. Import lewat Excel atau tambah manual.</div>
                 ) : filteredWarga.map(function (w) {
                   return (
-                    <div key={w.id} onClick={function () { setViewingWarga(w); }} className="bg-white rounded-2xl p-4 border border-slate-100 active:bg-slate-50 cursor-pointer">
+                    <div key={w.id} onClick={function () { setViewingWarga(w); }} className="bg-white rounded-2xl p-3 border border-slate-100 active:bg-slate-50 cursor-pointer">
                       <div className="flex justify-between items-start">
                         <div className="flex-1 min-w-0">
                           <p className="font-semibold text-slate-800 text-sm truncate">{w.namaKK}</p>
-                          <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5"><IconMapPin className="w-3 h-3" /> RT {w.rt} · {w.alamat}</p>
+                          <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5"><IconMapPin className="w-3 h-3" /> {w.alamat}</p>
                           <div className="flex gap-1.5 mt-2 flex-wrap">
                             <span className="text-xs px-2 py-0.5 bg-slate-50 rounded-full text-slate-500">{w.anggota.length} jiwa</span>
                             <span className={'text-xs px-2 py-0.5 rounded-full ' + (w.kriteriaRumah === 'Sehat' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500')}>{w.kriteriaRumah}</span>
@@ -1541,13 +1541,13 @@ function App() {
               {!myWarga ? (
                 <div className="text-center py-10 text-slate-400 text-sm">Data keluarga tidak ditemukan. Hubungi pengurus Dasawisma.</div>
               ) : (
-                <div className="bg-white rounded-2xl p-4 border border-slate-100 space-y-4">
+                <div className="bg-white rounded-2xl p-3 border border-slate-100 space-y-4">
                   <div>
                     <p className="font-bold text-slate-800">{myWarga.namaKK}</p>
-                    <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5"><IconMapPin className="w-3 h-3" /> RT {myWarga.rt} · {myWarga.alamat}</p>
+                    <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5"><IconMapPin className="w-3 h-3" /> {myWarga.alamat}</p>
                   </div>
                   {renderWargaDetail(myWarga)}
-                  <button onClick={openPengaturan} className="w-full bg-rose-50 text-rose-600 font-medium py-2.5 rounded-xl text-sm flex items-center justify-center gap-1.5"><IconPencil className="w-3.5 h-3.5" />Ubah Data di Pengaturan</button>
+                  <button onClick={openPengaturan} className="w-full bg-rose-50 text-rose-600 font-medium py-2 rounded-xl text-sm flex items-center justify-center gap-1.5"><IconPencil className="w-3.5 h-3.5" />Ubah Data di Pengaturan</button>
                 </div>
               )}
             </>
@@ -1579,7 +1579,7 @@ function App() {
                   <div className="text-center py-10 text-slate-400 text-sm">Belum ada kegiatan</div>
                 ) : sortedKegiatan.map(function (k) {
                   return (
-                    <div key={k.id} className="bg-white rounded-2xl p-4 border border-slate-100">
+                    <div key={k.id} className="bg-white rounded-2xl p-3 border border-slate-100">
                       <div className="flex gap-3">
                         <div className="w-11 h-11 rounded-xl bg-amber-50 flex flex-col items-center justify-center shrink-0">
                           <span className="text-xs font-bold text-amber-600 leading-none">{k.tanggal ? new Date(k.tanggal).getDate() : '-'}</span>
@@ -1592,7 +1592,7 @@ function App() {
                         </div>
                       </div>
                       {role === 'pengurus' && (
-                        <div className="flex gap-2 mt-3 pt-3 border-t border-slate-50">
+                        <div className="flex gap-2 mt-2 pt-3 border-t border-slate-50">
                           <button onClick={function () { openEditKegiatan(k); }} className="flex-1 bg-slate-50 text-slate-600 rounded-lg py-1.5 text-xs font-medium flex items-center justify-center gap-1"><IconPencil className="w-3 h-3" />Edit</button>
                           <button onClick={function () { setConfirmDelete({ type: 'kegiatan', id: k.id, label: k.nama }); }} className="flex-1 bg-red-50 text-red-500 rounded-lg py-1.5 text-xs font-medium flex items-center justify-center gap-1"><IconTrash className="w-3 h-3" />Hapus</button>
                         </div>
@@ -1606,17 +1606,43 @@ function App() {
 
           {page === 'keuangan' && (
             <>
-              <div className="bg-slate-800 rounded-2xl p-4 text-white flex justify-between items-center">
+              <div className="bg-slate-800 rounded-2xl p-3 text-white flex justify-between items-center">
                 <span className="text-sm text-slate-300">Saldo Kas Saat Ini</span>
                 <span className="text-lg font-bold">{formatRupiah(saldoKas)}</span>
               </div>
 
+              {role === 'anggota' && !myWarga && (
+                <div className="bg-white rounded-2xl p-3 border border-slate-100 text-center text-sm text-slate-400">Data keluarga belum tertaut, hubungi pengurus untuk mengajukan pembayaran iuran.</div>
+              )}
+
+              {role === 'anggota' && myWarga && (
+                <div className="bg-white rounded-2xl p-3 border border-slate-100">
+                  <p className="text-sm font-semibold text-slate-700 mb-2">Tagihan Iuran Saya ({currentPeriode})</p>
+                  {myTagihanStatus === 'approved' ? (
+                    <div className="flex items-center gap-2 bg-emerald-50 text-emerald-700 rounded-xl px-3 py-2.5 text-xs font-medium">
+                      <IconCheckCircle className="w-4 h-4" />Iuran bulan ini sudah tercatat, terima kasih!
+                    </div>
+                  ) : myTagihanStatus === 'pending' ? (
+                    <div className="flex items-center gap-2 bg-amber-50 text-amber-700 rounded-xl px-3 py-2.5 text-xs font-medium">
+                      <IconAlertCircle className="w-4 h-4" />Menunggu verifikasi pengurus
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-xs text-slate-400 mb-2">Belum ada pembayaran tercatat untuk bulan ini.</p>
+                      <button onClick={function () { openPengajuan(); }} className="w-full bg-rose-600 text-white font-semibold py-2 rounded-xl flex items-center justify-center gap-1.5 text-sm">
+                        <IconUpload className="w-4 h-4" />Ajukan Pembayaran Iuran
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+
               {role === 'pengurus' && (
                 <div className="grid grid-cols-2 gap-2">
-                  <button onClick={openAddKeuangan} className="bg-rose-600 text-white font-semibold py-2.5 rounded-xl flex flex-col items-center justify-center gap-0.5 text-xs">
+                  <button onClick={openAddKeuangan} className="bg-rose-600 text-white font-semibold py-2 rounded-xl flex flex-col items-center justify-center gap-0.5 text-xs">
                     <IconPlus className="w-4 h-4" />Transaksi
                   </button>
-                  <button onClick={openIuran} className="bg-emerald-600 text-white font-semibold py-2.5 rounded-xl flex flex-col items-center justify-center gap-0.5 text-xs">
+                  <button onClick={openIuran} className="bg-emerald-600 text-white font-semibold py-2 rounded-xl flex flex-col items-center justify-center gap-0.5 text-xs">
                     <IconPlus className="w-4 h-4" />Iuran
                   </button>
                 </div>
@@ -1632,7 +1658,7 @@ function App() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 <div className="bg-emerald-50 rounded-2xl p-4">
                   <div className="flex items-center gap-1.5 text-emerald-600"><IconArrowUpCircle className="w-4 h-4" /><span className="text-xs font-medium">Pemasukan</span></div>
                   <p className="text-base font-bold text-emerald-700 mt-1">{formatRupiah(masukBulanIni)}</p>
@@ -1642,32 +1668,6 @@ function App() {
                   <p className="text-base font-bold text-red-600 mt-1">{formatRupiah(keluarBulanIni)}</p>
                 </div>
               </div>
-
-              {role === 'anggota' && !myWarga && (
-                <div className="bg-white rounded-2xl p-4 border border-slate-100 text-center text-sm text-slate-400">Data keluarga belum tertaut, hubungi pengurus untuk mengajukan pembayaran iuran.</div>
-              )}
-
-              {role === 'anggota' && myWarga && (
-                <div className="bg-white rounded-2xl p-4 border border-slate-100">
-                  <p className="text-sm font-semibold text-slate-700 mb-2">Tagihan Iuran Saya ({currentPeriode})</p>
-                  {myTagihanStatus === 'approved' ? (
-                    <div className="flex items-center gap-2 bg-emerald-50 text-emerald-700 rounded-xl px-3 py-2.5 text-xs font-medium">
-                      <IconCheckCircle className="w-4 h-4" />Iuran bulan ini sudah tercatat, terima kasih!
-                    </div>
-                  ) : myTagihanStatus === 'pending' ? (
-                    <div className="flex items-center gap-2 bg-amber-50 text-amber-700 rounded-xl px-3 py-2.5 text-xs font-medium">
-                      <IconAlertCircle className="w-4 h-4" />Menunggu verifikasi pengurus
-                    </div>
-                  ) : (
-                    <>
-                      <p className="text-xs text-slate-400 mb-2">Belum ada pembayaran tercatat untuk bulan ini.</p>
-                      <button onClick={function () { openPengajuan(); }} className="w-full bg-rose-600 text-white font-semibold py-2.5 rounded-xl flex items-center justify-center gap-1.5 text-sm">
-                        <IconUpload className="w-4 h-4" />Ajukan Pembayaran Iuran
-                      </button>
-                    </>
-                  )}
-                </div>
-              )}
 
               {role === 'pengurus' && (
                 <>
@@ -1683,7 +1683,7 @@ function App() {
                   <button onClick={function () { downloadTemplate(KEUANGAN_HEADERS, 'Template_Data_Keuangan.xlsx', 'Template'); }} className="text-xs text-slate-400 underline w-full text-center">Unduh template Excel</button>
 
                   {pendingTagihan.length > 0 && (
-                    <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+                    <div className="bg-amber-50 border border-amber-200 rounded-2xl p-3">
                       <p className="text-sm font-semibold text-amber-700 mb-2">Tagihan Menunggu Persetujuan ({pendingTagihan.length})</p>
                       <div className="space-y-2">
                         {pendingTagihan.map(function (t) {
@@ -1708,10 +1708,10 @@ function App() {
                 {monthlyReport.length === 0 ? (
                   <div className="text-center py-10 text-slate-400 text-sm">Belum ada transaksi bulan ini</div>
                 ) : monthlyReport.map(function (r) {
-                  const isOpen = expandedCategory === r.key;
+                  const isOpen = role === 'pengurus' && expandedCategory === r.key;
                   return (
                     <div key={r.key} className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
-                      <button onClick={function () { setExpandedCategory(isOpen ? null : r.key); }} className="w-full flex items-center justify-between p-3.5">
+                      <button onClick={function () { if (role === 'pengurus') setExpandedCategory(isOpen ? null : r.key); }} className="w-full flex items-center justify-between p-3.5">
                         <div className="flex items-center gap-2.5 min-w-0">
                           <div className={'w-8 h-8 rounded-full flex items-center justify-center shrink-0 ' + (r.jenis === 'Masuk' ? 'bg-emerald-50' : 'bg-red-50')}>
                             {r.jenis === 'Masuk' ? <IconArrowUpCircle className="w-4 h-4 text-emerald-600" /> : <IconArrowDownCircle className="w-4 h-4 text-red-500" />}
@@ -1723,7 +1723,7 @@ function App() {
                         </div>
                         <div className="flex items-center gap-1.5 shrink-0">
                           <span className={'text-sm font-bold ' + (r.jenis === 'Masuk' ? 'text-emerald-600' : 'text-red-500')}>{r.jenis === 'Masuk' ? '+' : '-'}{formatRupiah(r.total)}</span>
-                          <IconChevronRight className={'w-4 h-4 text-slate-300 ' + (isOpen ? 'rotate-90' : '')} />
+                          {role === 'pengurus' && <IconChevronRight className={'w-4 h-4 text-slate-300 ' + (isOpen ? 'rotate-90' : '')} />}
                         </div>
                       </button>
                       {isOpen && (
@@ -1759,7 +1759,7 @@ function App() {
 
           {page === 'pengaturan' && (
             <>
-              <div className="bg-white rounded-2xl p-4 border border-slate-100 space-y-3">
+              <div className="bg-white rounded-2xl p-3 border border-slate-100 space-y-3">
                 <p className="text-sm font-semibold text-slate-700">Akun Saya</p>
                 <div>
                   <label className="text-xs font-medium text-slate-500">Nama Lengkap</label>
@@ -1773,30 +1773,30 @@ function App() {
                   <label className="text-xs font-medium text-slate-500">Password Baru (kosongkan jika tidak diubah)</label>
                   <input type="password" value={akunForm.password} onChange={function (e) { setAkunForm(Object.assign({}, akunForm, { password: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
                 </div>
-                <button onClick={saveAkun} className="w-full bg-rose-600 text-white font-semibold py-2.5 rounded-xl text-sm">Simpan Akun</button>
+                <button onClick={saveAkun} className="w-full bg-rose-600 text-white font-semibold py-2 rounded-xl text-sm">Simpan Akun</button>
               </div>
 
               {role === 'anggota' && (
                 myWarga ? (
-                  <div className="bg-white rounded-2xl p-4 border border-slate-100 space-y-4">
+                  <div className="bg-white rounded-2xl p-3 border border-slate-100 space-y-4">
                     <p className="text-sm font-semibold text-slate-700">Data Keluarga Saya</p>
                     {renderWargaFormFields()}
                     <button onClick={saveMyWarga} className="w-full bg-rose-600 text-white font-semibold py-3 rounded-xl">Simpan Data Keluarga</button>
                   </div>
                 ) : (
-                  <div className="bg-white rounded-2xl p-4 border border-slate-100 text-center text-sm text-slate-400">Data keluarga belum tertaut. Hubungi pengurus Dasawisma.</div>
+                  <div className="bg-white rounded-2xl p-3 border border-slate-100 text-center text-sm text-slate-400">Data keluarga belum tertaut. Hubungi pengurus Dasawisma.</div>
                 )
               )}
 
               {role === 'pengurus' && (
                 <>
-                  <div className="bg-white rounded-2xl p-4 border border-slate-100">
-                    <p className="text-sm font-semibold text-slate-700 mb-3">Akun Terdaftar</p>
+                  <div className="bg-white rounded-2xl p-3 border border-slate-100">
+                    <p className="text-sm font-semibold text-slate-700 mb-2">Akun Terdaftar</p>
                     <div className="space-y-2">
                       {users.length === 0 && <p className="text-xs text-slate-400 text-center py-3">Belum ada akun</p>}
                       {users.map(function (u) {
                         return (
-                          <div key={u.id} className="flex justify-between items-center py-2 border-b border-slate-50 last:border-0">
+                          <div key={u.id} className="flex justify-between items-center py-1.5 border-b border-slate-50 last:border-0">
                             <div>
                               <p className="text-sm font-medium text-slate-800">{u.namaLengkap}</p>
                               <p className="text-xs text-slate-400">@{u.username} · {u.role === 'pengurus' ? 'Pengurus' : 'Anggota'}</p>
@@ -1807,18 +1807,17 @@ function App() {
                       })}
                     </div>
                   </div>
-                  <div className="bg-white rounded-2xl p-4 border border-slate-100">
-                    <p className="text-sm font-semibold text-slate-700 mb-3">Buat Akun untuk Warga</p>
+                  <div className="bg-white rounded-2xl p-3 border border-slate-100">
+                    <p className="text-sm font-semibold text-slate-700 mb-2">Buat Akun untuk Warga</p>
                     <div className="space-y-2">
                       {wargaList.filter(function (w) { return !users.some(function (u) { return u.wargaId === w.id; }); }).length === 0 && (
                         <p className="text-xs text-slate-400 text-center py-3">Semua warga sudah punya akun, atau belum ada data warga</p>
                       )}
                       {wargaList.filter(function (w) { return !users.some(function (u) { return u.wargaId === w.id; }); }).map(function (w) {
                         return (
-                          <div key={w.id} className="flex justify-between items-center py-2 border-b border-slate-50 last:border-0">
+                          <div key={w.id} className="flex justify-between items-center py-1.5 border-b border-slate-50 last:border-0">
                             <div>
                               <p className="text-sm font-medium text-slate-800">{w.namaKK}</p>
-                              <p className="text-xs text-slate-400">RT {w.rt}</p>
                             </div>
                             <button onClick={function () { openCreateAkunWarga(w); }} className="text-xs bg-rose-600 text-white px-3 py-1.5 rounded-full font-medium">Buat Akun</button>
                           </div>
@@ -1826,10 +1825,10 @@ function App() {
                       })}
                     </div>
                   </div>
-                  <div className="bg-white rounded-2xl p-4 border border-red-100">
+                  <div className="bg-white rounded-2xl p-3 border border-red-100">
                     <p className="text-sm font-semibold text-red-600 mb-1">Reset Semua Data</p>
-                    <p className="text-xs text-slate-500 mb-3">Menghapus SEMUA data (Warga, Kegiatan, Akun warga, Keuangan, Chat, Notifikasi, Tagihan — baik di HP ini maupun di Firebase) dan mengembalikan aplikasi ke kondisi benar-benar baru dengan 1 akun default (pengurus / pengurus123). Tindakan ini tidak bisa dibatalkan.</p>
-                    <button onClick={function () { setConfirmDelete({ type: 'resetlokal', id: null, label: 'Semua data aplikasi (HP ini dan Firebase)' }); }} className="w-full bg-red-600 text-white font-semibold py-2.5 rounded-xl text-sm">Reset Semua Data</button>
+                    <p className="text-xs text-slate-500 mb-2">Menghapus SEMUA data (Warga, Kegiatan, Akun warga, Keuangan, Chat, Notifikasi, Tagihan — baik di HP ini maupun di Firebase) dan mengembalikan aplikasi ke kondisi benar-benar baru dengan 1 akun default (pengurus / pengurus123). Tindakan ini tidak bisa dibatalkan.</p>
+                    <button onClick={function () { setConfirmDelete({ type: 'resetlokal', id: null, label: 'Semua data aplikasi (HP ini dan Firebase)' }); }} className="w-full bg-red-600 text-white font-semibold py-2 rounded-xl text-sm">Reset Semua Data</button>
                   </div>
                 </>
               )}
@@ -1839,7 +1838,7 @@ function App() {
           {page === 'chat' && (
             <div>
               {!firebaseReady && (
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-700 mb-3">
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-700 mb-2">
                   Chat grup belum aktif. Pengurus perlu setup Firebase gratis dulu (lihat README.md), lalu isi firebaseConfig di index.html.
                 </div>
               )}
@@ -1882,7 +1881,7 @@ function App() {
             {navItems.map(function (item) {
               const IconComp = item.icon;
               return (
-                <button key={item.key} onClick={function () { setPage(item.key); }} className={'flex-1 flex flex-col items-center gap-1 py-2.5 relative ' + (page === item.key ? 'text-rose-600' : 'text-slate-400')}>
+                <button key={item.key} onClick={function () { setPage(item.key); }} className={'flex-1 flex flex-col items-center gap-0.5 py-2 relative ' + (page === item.key ? 'text-rose-600' : 'text-slate-400')}>
                   <span className="relative">
                     <IconComp className="w-5 h-5" />
                     {item.key === 'notifikasi' && unreadCount > 0 && (
@@ -1896,7 +1895,7 @@ function App() {
           </div>
         </div>
 
-        {role === 'pengurus' && (
+        {role === 'pengurus' && page !== 'chat' && (
           <div className="fixed bottom-16 left-0 right-0 flex justify-center z-30 pointer-events-none">
             <div className="w-full max-w-md flex">
               <div className="flex-1"></div>
@@ -1913,7 +1912,7 @@ function App() {
           </div>
         )}
 
-        {fabMenuOpen && (
+        {fabMenuOpen && page !== 'chat' && (
           <div className="fixed inset-0 z-30" onClick={function () { setFabMenuOpen(false); }}>
             <div className="fixed left-0 right-0 flex justify-center pointer-events-none" style={{ bottom: '7.5rem' }}>
               <div className="w-full max-w-md flex justify-end pr-3">
@@ -1972,28 +1971,17 @@ function App() {
           <div className="fixed inset-0 z-40 flex items-end justify-center" style={{ backgroundColor: 'rgba(15,23,42,0.5)' }} onClick={function () { setKegiatanModal(null); }}>
             <div className="w-full max-w-md bg-white rounded-t-3xl overflow-y-auto" style={{ maxHeight: '90vh' }} onClick={function (e) { e.stopPropagation(); }}>
               <div className="sticky top-0 bg-white px-5 pt-4 pb-3 border-b border-slate-100 flex justify-between items-center">
-                <p className="font-bold text-slate-800">{kegiatanModal === 'edit' ? 'Edit Kegiatan' : 'Tambah Info'}</p>
+                <p className="font-bold text-slate-800">{kegiatanModal === 'edit' ? 'Edit Kegiatan' : 'Tambah ' + kegiatanForm.jenisInfo}</p>
                 <button onClick={function () { setKegiatanModal(null); }}><IconX className="w-5 h-5 text-slate-400" /></button>
               </div>
               <div className="p-5 space-y-4">
-                {kegiatanModal === 'add' && (
-                  <div>
-                    <label className="text-xs font-medium text-slate-500 mb-1.5 block">Jenis Info</label>
-                    <div className="flex gap-2">
-                      {['Kegiatan', 'Pengumuman', 'Tagihan'].map(function (jt) {
-                        return <button key={jt} onClick={function () { setKegiatanForm(Object.assign({}, kegiatanForm, { jenisInfo: jt })); }} className={'flex-1 py-2 rounded-xl text-xs font-medium ' + (kegiatanForm.jenisInfo === jt ? 'bg-rose-600 text-white' : 'bg-slate-100 text-slate-500')}>{jt}</button>;
-                      })}
-                    </div>
-                  </div>
-                )}
-
                 {kegiatanForm.jenisInfo === 'Kegiatan' ? (
                   <>
                     <div>
                       <label className="text-xs font-medium text-slate-500">Nama Kegiatan</label>
                       <input value={kegiatanForm.nama} onChange={function (e) { setKegiatanForm(Object.assign({}, kegiatanForm, { nama: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-2">
                       <div>
                         <label className="text-xs font-medium text-slate-500">Tanggal</label>
                         <input type="date" value={kegiatanForm.tanggal} onChange={function (e) { setKegiatanForm(Object.assign({}, kegiatanForm, { tanggal: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
@@ -2005,7 +1993,7 @@ function App() {
                         </select>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-2">
                       <div>
                         <label className="text-xs font-medium text-slate-500">Tempat</label>
                         <input value={kegiatanForm.tempat} onChange={function (e) { setKegiatanForm(Object.assign({}, kegiatanForm, { tempat: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
@@ -2075,7 +2063,7 @@ function App() {
               <div className="p-5 space-y-4">
                 <div className="flex gap-2">
                   {['Masuk', 'Keluar'].map(function (j) {
-                    return <button key={j} onClick={function () { setKeuanganForm(Object.assign({}, keuanganForm, { jenis: j, kategori: '' })); }} className={'flex-1 py-2.5 rounded-xl text-sm font-medium ' + (keuanganForm.jenis === j ? (j === 'Masuk' ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white') : 'bg-slate-100 text-slate-500')}>{j}</button>;
+                    return <button key={j} onClick={function () { setKeuanganForm(Object.assign({}, keuanganForm, { jenis: j, kategori: '' })); }} className={'flex-1 py-2 rounded-xl text-sm font-medium ' + (keuanganForm.jenis === j ? (j === 'Masuk' ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white') : 'bg-slate-100 text-slate-500')}>{j}</button>;
                   })}
                 </div>
                 <div>
@@ -2212,8 +2200,8 @@ function App() {
                 </div>
               </div>
               <div className="flex gap-2 mt-4">
-                <button onClick={function () { setAkunWargaModal(null); }} className="flex-1 bg-slate-100 text-slate-600 py-2.5 rounded-xl text-sm font-medium">Batal</button>
-                <button onClick={saveAkunWarga} className="flex-1 bg-rose-600 text-white py-2.5 rounded-xl text-sm font-medium">Simpan</button>
+                <button onClick={function () { setAkunWargaModal(null); }} className="flex-1 bg-slate-100 text-slate-600 py-2 rounded-xl text-sm font-medium">Batal</button>
+                <button onClick={saveAkunWarga} className="flex-1 bg-rose-600 text-white py-2 rounded-xl text-sm font-medium">Simpan</button>
               </div>
             </div>
           </div>
@@ -2284,8 +2272,8 @@ function App() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={function () { rejectTagihan(klasifikasiModal); }} className="flex-1 bg-red-50 text-red-600 py-2.5 rounded-xl text-sm font-medium">Tolak</button>
-                  <button onClick={approveTagihan} className="flex-1 bg-rose-600 text-white py-2.5 rounded-xl text-sm font-medium">Setujui</button>
+                  <button onClick={function () { rejectTagihan(klasifikasiModal); }} className="flex-1 bg-red-50 text-red-600 py-2 rounded-xl text-sm font-medium">Tolak</button>
+                  <button onClick={approveTagihan} className="flex-1 bg-rose-600 text-white py-2 rounded-xl text-sm font-medium">Setujui</button>
                 </div>
               </div>
             </div>
@@ -2299,8 +2287,8 @@ function App() {
               <p className="font-semibold text-slate-800 text-sm">Hapus Data?</p>
               <p className="text-xs text-slate-500 mt-1">"{confirmDelete.label}" akan dihapus permanen.</p>
               <div className="flex gap-2 mt-4">
-                <button onClick={function () { setConfirmDelete(null); }} className="flex-1 bg-slate-100 text-slate-600 py-2.5 rounded-xl text-sm font-medium">Batal</button>
-                <button onClick={confirmDeleteAction} className="flex-1 bg-red-600 text-white py-2.5 rounded-xl text-sm font-medium">Hapus</button>
+                <button onClick={function () { setConfirmDelete(null); }} className="flex-1 bg-slate-100 text-slate-600 py-2 rounded-xl text-sm font-medium">Batal</button>
+                <button onClick={confirmDeleteAction} className="flex-1 bg-red-600 text-white py-2 rounded-xl text-sm font-medium">Hapus</button>
               </div>
             </div>
           </div>
