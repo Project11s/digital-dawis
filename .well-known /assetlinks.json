@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.netlify.digital_dawis.twa",
+        "sha256_cert_fingerprints": ["07:34:DC:3E:18:13:D6:29:9A:F9:23:83:5A:1D:48:EF:67:E7:D7:41:7F:CB:F5:63:97:E1:69:88:1F:7F:81:2A"]
+      }
+    }]
