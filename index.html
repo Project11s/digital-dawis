@@ -86,7 +86,7 @@ const POKJA_LIST = ['Pokja I', 'Pokja II', 'Pokja III', 'Pokja IV', 'Umum'];
 const SUMBER_AIR_LIST = ['PDAM', 'Sumur', 'Sungai', 'Lainnya'];
 const KATEGORI_MASUK = ['Kas PKK', 'Kas Dawis', 'Posyandu', 'Arisan', 'Iuran Anggota', 'Sumbangan', 'Bantuan PKK', 'Lainnya'];
 const KATEGORI_KELUAR = ['Operasional', 'Konsumsi Kegiatan', 'ATK', 'Sosial', 'Lainnya'];
-const WARGA_HEADERS = ['Nama Kepala Keluarga', 'RT', 'Alamat', 'Balita', 'PUS', 'WUS', 'Ibu Hamil', 'Ibu Menyusui', 'Lansia', '3 Buta', 'Berkebutuhan Khusus', 'Kriteria Rumah', 'Jamban', 'Sumber Air', 'Tempat Sampah', 'Saluran Limbah', 'Stiker P4K', 'Makanan Pokok', 'UP2K', 'Jenis Usaha'];
+const WARGA_HEADERS = ['Nama Kepala Keluarga', 'Alamat', 'Balita', 'PUS', 'WUS', 'Ibu Hamil', 'Ibu Menyusui', 'Lansia', '3 Buta', 'Berkebutuhan Khusus', 'Kriteria Rumah', 'Jamban', 'Sumber Air', 'Tempat Sampah', 'Saluran Limbah', 'Stiker P4K', 'Makanan Pokok', 'UP2K', 'Jenis Usaha'];
 const KEGIATAN_HEADERS = ['Nama Kegiatan', 'Tanggal', 'Pokja', 'Jumlah Peserta', 'Tempat', 'Keterangan'];
 const KEUANGAN_HEADERS = ['Tanggal', 'Jenis', 'Kategori', 'Nominal', 'Keterangan'];
 const ANGGOTA_HEADERS = ['Nama', 'Jenis Kelamin (L/P)', 'Tanggal Lahir', 'Status Dalam Keluarga', 'Status Kawin', 'Pendidikan', 'Pekerjaan'];
@@ -148,7 +148,7 @@ const emptyWargaForm = () => ({
 const emptyKegiatanForm = () => ({
   id: null, jenisInfo: 'Kegiatan',
   nama: '', tanggal: '', pokja: 'Umum', peserta: 0, tempat: '', keterangan: '',
-  judul: '', pesan: '', berulang: false, nominal: 0,
+  judul: '', pesan: '', berulang: false, nominal: 0, targetWargaId: '',
   kirimNotifikasi: true
 });
 const emptyKeuanganForm = () => ({ id: null, tanggal: '', jenis: 'Masuk', kategori: '', nominal: 0, keterangan: '', attachment: null });
@@ -446,11 +446,14 @@ function App() {
   const handleLogout = () => { setCurrentUser(null); setPage('dashboard'); };
   const openPengaturan = () => {
     setAkunForm({ namaLengkap: currentUser.namaLengkap, username: currentUser.username, password: '' });
+    setPage('pengaturan');
+  };
+  const openKeluargaSaya = () => {
     if (currentUser.role === 'anggota') {
       const mine = wargaList.find(function (w) { return w.id === currentUser.wargaId; });
       setWargaForm(mine ? JSON.parse(JSON.stringify(mine)) : emptyWargaForm());
     }
-    setPage('pengaturan');
+    setPage('warga');
   };
   const saveAkun = () => {
     if (!akunForm.namaLengkap.trim() || !akunForm.username.trim()) { showToast('Nama dan username wajib diisi', 'error'); return; }
@@ -583,6 +586,7 @@ function App() {
   const myTagihanStatus = myTagihanThisPeriod ? myTagihanThisPeriod.status : null;
   const myApprovedThisPeriod = myTagihanStatus === 'approved';
   const visibleNotifikasi = notifikasiList.filter(function (n) {
+    if (n.wargaId && role === 'anggota' && n.wargaId !== currentUser.wargaId) return false;
     if (role === 'anggota' && n.kategori === 'Tagihan' && n.berulang && myApprovedThisPeriod) return false;
     return true;
   });
@@ -596,8 +600,10 @@ function App() {
 
   const pengumumanTerbaru = notifikasiList.filter(function (n) { return n.kategori === 'Pengumuman'; })
     .sort(function (a, b) { return new Date(b.tanggal || 0) - new Date(a.tanggal || 0); }).slice(0, 3);
-  const tagihanBulanIniNotif = visibleNotifikasi.filter(function (n) {
+  const tagihanBulanIniNotif = role !== 'anggota' ? [] : visibleNotifikasi.filter(function (n) {
     if (n.kategori !== 'Tagihan') return false;
+    if (n.judul === 'Bukti Pembayaran Baru' || n.judul === 'Pembayaran Disetujui' || n.judul === 'Pembayaran Ditolak') return false;
+    if (myApprovedThisPeriod) return false;
     if (n.berulang) return true;
     if (!n.tanggal) return false;
     const d = new Date(n.tanggal);
@@ -706,7 +712,7 @@ function App() {
   const exportWarga = () => {
     const rows = wargaList.map(function (w) {
       return {
-        'ID Keluarga': w.id, 'Nama Kepala Keluarga': w.namaKK, 'RT': w.rt, 'Alamat': w.alamat,
+        'ID Keluarga': w.id, 'Nama Kepala Keluarga': w.namaKK, 'Alamat': w.alamat,
         'Jumlah Anggota': w.anggota.length,
         'Laki-laki': w.anggota.filter(function (m) { return m.jk === 'L'; }).length,
         'Perempuan': w.anggota.filter(function (m) { return m.jk === 'P'; }).length,
@@ -767,6 +773,7 @@ function App() {
       chatDb.collection('dasawisma_notifikasi').add({
         judul: kegiatanForm.judul.trim(), pesan: kegiatanForm.pesan, kategori: 'Tagihan',
         nominal: Number(kegiatanForm.nominal), tanggal: kegiatanForm.tanggal, berulang: kegiatanForm.berulang,
+        wargaId: kegiatanForm.targetWargaId ? Number(kegiatanForm.targetWargaId) : null,
         createdBy: currentUser.namaLengkap, createdAt: firebase.firestore.FieldValue.serverTimestamp()
       }).then(function () { showToast('Tagihan berhasil dibuat'); setKegiatanModal(null); })
         .catch(function (e) { console.error(e); showToast('Gagal membuat tagihan (' + (e && e.message ? e.message : 'cek Firestore') + ')', 'error'); });
@@ -892,7 +899,7 @@ function App() {
       return chatDb.collection('dasawisma_notifikasi').add({
         judul: 'Bukti Pembayaran Baru',
         pesan: currentUser.namaLengkap + ' mengajukan pembayaran ' + formatRupiah(pengajuanForm.nominal),
-        kategori: 'Tagihan', tanggal: pengajuanForm.tanggal, berulang: false, tagihanRef: docRef.id,
+        kategori: 'Tagihan', tanggal: pengajuanForm.tanggal, berulang: false, tagihanRef: docRef.id, wargaId: currentUser.wargaId,
         createdBy: currentUser.namaLengkap, createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
     }).then(function () { showToast('Bukti pembayaran terkirim, menunggu persetujuan pengurus'); setPengajuanModal(false); })
@@ -922,11 +929,26 @@ function App() {
     });
     const tagihanRef = chatDb.collection('dasawisma_tagihan').doc(t.id);
     batch.update(tagihanRef, { status: 'approved', klasifikasi: klasifikasiForm });
+    const notifRef = chatDb.collection('dasawisma_notifikasi').doc();
+    batch.set(notifRef, {
+      judul: 'Pembayaran Disetujui', pesan: 'Pembayaran Anda sebesar ' + formatRupiah(t.nominal) + ' sudah diverifikasi dan dicatat pengurus.',
+      kategori: 'Tagihan', tanggal: t.tanggal || '', berulang: false, wargaId: t.wargaId,
+      createdBy: currentUser.namaLengkap, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
     batch.commit().then(function () { showToast('Pembayaran disetujui & tercatat di keuangan'); setKlasifikasiModal(null); })
       .catch(function (e) { console.error(e); showToast('Gagal menyimpan, cek koneksi internet (' + (e && e.message ? e.message : 'cek Firestore') + ')', 'error'); });
   };
   const rejectTagihan = (t) => {
-    if (chatDb) chatDb.collection('dasawisma_tagihan').doc(t.id).update({ status: 'rejected' });
+    if (chatDb) {
+      const batch = chatDb.batch();
+      batch.update(chatDb.collection('dasawisma_tagihan').doc(t.id), { status: 'rejected' });
+      batch.set(chatDb.collection('dasawisma_notifikasi').doc(), {
+        judul: 'Pembayaran Ditolak', pesan: 'Pengajuan pembayaran Anda sebesar ' + formatRupiah(t.nominal) + ' ditolak pengurus. Silakan hubungi pengurus untuk info lebih lanjut.',
+        kategori: 'Tagihan', tanggal: t.tanggal || '', berulang: false, wargaId: t.wargaId,
+        createdBy: currentUser.namaLengkap, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      batch.commit().catch(function (e) { console.error(e); });
+    }
     showToast('Pengajuan ditolak');
     setKlasifikasiModal(null);
   };
@@ -1012,7 +1034,7 @@ function App() {
             return {
               id: nextId(),
               namaKK: namaKK,
-              rt: String(getField(row, 'RT') || ''), alamat: String(getField(row, 'Alamat') || ''),
+              alamat: String(getField(row, 'Alamat') || ''),
               anggota: anggota,
               balita: Number(getField(row, 'Balita')) || 0, pus: Number(getField(row, 'PUS')) || 0, wus: Number(getField(row, 'WUS')) || 0,
               bumil: Number(getField(row, 'Ibu Hamil')) || 0, busui: Number(getField(row, 'Ibu Menyusui')) || 0, lansia: Number(getField(row, 'Lansia')) || 0,
@@ -1084,21 +1106,15 @@ function App() {
     e.target.value = '';
   };
 
-  const renderWargaFormFields = () => (
+  const renderWargaFormFields = (basicOnly) => (
     <>
       <div>
         <label className="text-xs font-medium text-slate-500">Nama Kepala Keluarga</label>
         <input value={wargaForm.namaKK} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { namaKK: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
       </div>
-      <div className="grid grid-cols-2 gap-2">
-        <div>
-          <label className="text-xs font-medium text-slate-500">RT</label>
-          <input value={wargaForm.rt} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { rt: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
-        </div>
-        <div>
-          <label className="text-xs font-medium text-slate-500">Alamat</label>
-          <input value={wargaForm.alamat} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { alamat: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
-        </div>
+      <div>
+        <label className="text-xs font-medium text-slate-500">Alamat</label>
+        <input value={wargaForm.alamat} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { alamat: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
       </div>
 
       <div>
@@ -1141,76 +1157,80 @@ function App() {
         </div>
       </div>
 
-      <div>
-        <label className="text-xs font-medium text-slate-500 mb-2 block">Data Kesehatan & Kependudukan</label>
-        <div className="grid grid-cols-4 gap-2">
-          {[['balita', 'Balita'], ['pus', 'PUS'], ['wus', 'WUS'], ['bumil', 'Bumil'], ['busui', 'Busui'], ['lansia', 'Lansia'], ['tigaButa', '3 Buta'], ['berkebutuhan', 'Disabilitas']].map(function (pair) {
-            const key = pair[0], label = pair[1];
-            return (
-              <div key={key}>
-                <input type="number" min="0" value={wargaForm[key]} onChange={function (e) { const v = {}; v[key] = Number(e.target.value) || 0; setWargaForm(Object.assign({}, wargaForm, v)); }} className="w-full px-2 py-2 border border-slate-200 rounded-lg text-xs text-center" />
-                <p className="text-xs text-slate-400 text-center mt-0.5">{label}</p>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      {!basicOnly && (
+        <>
+          <div>
+            <label className="text-xs font-medium text-slate-500 mb-2 block">Data Kesehatan & Kependudukan</label>
+            <div className="grid grid-cols-4 gap-2">
+              {[['balita', 'Balita'], ['pus', 'PUS'], ['wus', 'WUS'], ['bumil', 'Bumil'], ['busui', 'Busui'], ['lansia', 'Lansia'], ['tigaButa', '3 Buta'], ['berkebutuhan', 'Disabilitas']].map(function (pair) {
+                const key = pair[0], label = pair[1];
+                return (
+                  <div key={key}>
+                    <input type="number" min="0" value={wargaForm[key]} onChange={function (e) { const v = {}; v[key] = Number(e.target.value) || 0; setWargaForm(Object.assign({}, wargaForm, v)); }} className="w-full px-2 py-2 border border-slate-200 rounded-lg text-xs text-center" />
+                    <p className="text-xs text-slate-400 text-center mt-0.5">{label}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
 
-      <div className="grid grid-cols-2 gap-2">
-        <div>
-          <label className="text-xs font-medium text-slate-500">Kriteria Rumah</label>
-          <select value={wargaForm.kriteriaRumah} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { kriteriaRumah: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm">
-            <option>Sehat</option><option>Tidak Sehat</option>
-          </select>
-        </div>
-        <div>
-          <label className="text-xs font-medium text-slate-500">Jamban Keluarga</label>
-          <select value={wargaForm.jamban} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { jamban: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm">
-            <option>Ya</option><option>Tidak</option>
-          </select>
-        </div>
-        <div>
-          <label className="text-xs font-medium text-slate-500">Sumber Air</label>
-          <select value={wargaForm.sumberAir} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { sumberAir: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm">
-            {SUMBER_AIR_LIST.map(function (s) { return <option key={s}>{s}</option>; })}
-          </select>
-        </div>
-        <div>
-          <label className="text-xs font-medium text-slate-500">Tempat Sampah</label>
-          <select value={wargaForm.sampah} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { sampah: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm">
-            <option>Ya</option><option>Tidak</option>
-          </select>
-        </div>
-        <div>
-          <label className="text-xs font-medium text-slate-500">Saluran Limbah</label>
-          <select value={wargaForm.limbah} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { limbah: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm">
-            <option>Ya</option><option>Tidak</option>
-          </select>
-        </div>
-        <div>
-          <label className="text-xs font-medium text-slate-500">Stiker P4K</label>
-          <select value={wargaForm.stikerP4K} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { stikerP4K: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm">
-            <option>Ya</option><option>Tidak</option>
-          </select>
-        </div>
-        <div>
-          <label className="text-xs font-medium text-slate-500">Makanan Pokok</label>
-          <select value={wargaForm.makanan} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { makanan: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm">
-            <option>Beras</option><option>Non Beras</option>
-          </select>
-        </div>
-        <div>
-          <label className="text-xs font-medium text-slate-500">UP2K</label>
-          <select value={wargaForm.up2k} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { up2k: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm">
-            <option>Ya</option><option>Tidak</option>
-          </select>
-        </div>
-      </div>
-      {wargaForm.up2k === 'Ya' && (
-        <div>
-          <label className="text-xs font-medium text-slate-500">Jenis Usaha</label>
-          <input value={wargaForm.jenisUsaha} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { jenisUsaha: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
-        </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="text-xs font-medium text-slate-500">Kriteria Rumah</label>
+              <select value={wargaForm.kriteriaRumah} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { kriteriaRumah: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm">
+                <option>Sehat</option><option>Tidak Sehat</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-slate-500">Jamban Keluarga</label>
+              <select value={wargaForm.jamban} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { jamban: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm">
+                <option>Ya</option><option>Tidak</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-slate-500">Sumber Air</label>
+              <select value={wargaForm.sumberAir} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { sumberAir: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm">
+                {SUMBER_AIR_LIST.map(function (s) { return <option key={s}>{s}</option>; })}
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-slate-500">Tempat Sampah</label>
+              <select value={wargaForm.sampah} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { sampah: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm">
+                <option>Ya</option><option>Tidak</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-slate-500">Saluran Limbah</label>
+              <select value={wargaForm.limbah} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { limbah: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm">
+                <option>Ya</option><option>Tidak</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-slate-500">Stiker P4K</label>
+              <select value={wargaForm.stikerP4K} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { stikerP4K: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm">
+                <option>Ya</option><option>Tidak</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-slate-500">Makanan Pokok</label>
+              <select value={wargaForm.makanan} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { makanan: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm">
+                <option>Beras</option><option>Non Beras</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-slate-500">UP2K</label>
+              <select value={wargaForm.up2k} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { up2k: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm">
+                <option>Ya</option><option>Tidak</option>
+              </select>
+            </div>
+          </div>
+          {wargaForm.up2k === 'Ya' && (
+            <div>
+              <label className="text-xs font-medium text-slate-500">Jenis Usaha</label>
+              <input value={wargaForm.jenisUsaha} onChange={function (e) { setWargaForm(Object.assign({}, wargaForm, { jenisUsaha: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
+            </div>
+          )}
+        </>
       )}
     </>
   );
@@ -1218,7 +1238,6 @@ function App() {
   const renderWargaDetail = (w) => (
     <>
       <div className="grid grid-cols-2 gap-2 text-sm">
-        <div><p className="text-xs text-slate-400">RT</p><p className="font-medium text-slate-700">{w.rt}</p></div>
         <div><p className="text-xs text-slate-400">Alamat</p><p className="font-medium text-slate-700">{w.alamat}</p></div>
         <div><p className="text-xs text-slate-400">Kriteria Rumah</p><p className="font-medium text-slate-700">{w.kriteriaRumah}</p></div>
         <div><p className="text-xs text-slate-400">Jamban</p><p className="font-medium text-slate-700">{w.jamban}</p></div>
@@ -1321,7 +1340,7 @@ function App() {
                 <p className="text-rose-100 text-sm">Selamat datang,</p>
                 <p className="text-lg font-bold">{currentUser.namaLengkap}</p>
                 <p className="text-rose-100 text-xs mt-1">
-                  {wargaList[0] ? 'RT ' + wargaList[0].rt : ''} · {now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  {now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </p>
               </div>
 
@@ -1451,7 +1470,7 @@ function App() {
                 ) : filteredNotifikasi.map(function (n) {
                   const isRead = readNotifIds.includes(n.id);
                   const clickablePengurus = role === 'pengurus' && n.kategori === 'Tagihan' && n.tagihanRef;
-                  const clickableAnggota = role === 'anggota' && n.kategori === 'Tagihan' && !n.tagihanRef;
+                  const clickableAnggota = role === 'anggota' && n.kategori === 'Tagihan' && !n.tagihanRef && n.judul !== 'Pembayaran Disetujui' && n.judul !== 'Pembayaran Ditolak';
                   const clickable = clickablePengurus || clickableAnggota;
                   return (
                     <div key={n.id} onClick={function () {
@@ -1542,12 +1561,8 @@ function App() {
                 <div className="text-center py-10 text-slate-400 text-sm">Data keluarga tidak ditemukan. Hubungi pengurus Dasawisma.</div>
               ) : (
                 <div className="bg-white rounded-2xl p-3 border border-slate-100 space-y-4">
-                  <div>
-                    <p className="font-bold text-slate-800">{myWarga.namaKK}</p>
-                    <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5"><IconMapPin className="w-3 h-3" /> {myWarga.alamat}</p>
-                  </div>
-                  {renderWargaDetail(myWarga)}
-                  <button onClick={openPengaturan} className="w-full bg-rose-50 text-rose-600 font-medium py-2 rounded-xl text-sm flex items-center justify-center gap-1.5"><IconPencil className="w-3.5 h-3.5" />Ubah Data di Pengaturan</button>
+                  {renderWargaFormFields(true)}
+                  <button onClick={saveMyWarga} className="w-full bg-rose-600 text-white font-semibold py-3 rounded-xl">Simpan Data Keluarga</button>
                 </div>
               )}
             </>
@@ -1776,18 +1791,6 @@ function App() {
                 <button onClick={saveAkun} className="w-full bg-rose-600 text-white font-semibold py-2 rounded-xl text-sm">Simpan Akun</button>
               </div>
 
-              {role === 'anggota' && (
-                myWarga ? (
-                  <div className="bg-white rounded-2xl p-3 border border-slate-100 space-y-4">
-                    <p className="text-sm font-semibold text-slate-700">Data Keluarga Saya</p>
-                    {renderWargaFormFields()}
-                    <button onClick={saveMyWarga} className="w-full bg-rose-600 text-white font-semibold py-3 rounded-xl">Simpan Data Keluarga</button>
-                  </div>
-                ) : (
-                  <div className="bg-white rounded-2xl p-3 border border-slate-100 text-center text-sm text-slate-400">Data keluarga belum tertaut. Hubungi pengurus Dasawisma.</div>
-                )
-              )}
-
               {role === 'pengurus' && (
                 <>
                   <div className="bg-white rounded-2xl p-3 border border-slate-100">
@@ -1881,7 +1884,7 @@ function App() {
             {navItems.map(function (item) {
               const IconComp = item.icon;
               return (
-                <button key={item.key} onClick={function () { setPage(item.key); }} className={'flex-1 flex flex-col items-center gap-0.5 py-2 relative ' + (page === item.key ? 'text-rose-600' : 'text-slate-400')}>
+                <button key={item.key} onClick={function () { if (item.key === 'warga' && role === 'anggota') openKeluargaSaya(); else setPage(item.key); }} className={'flex-1 flex flex-col items-center gap-0.5 py-2 relative ' + (page === item.key ? 'text-rose-600' : 'text-slate-400')}>
                   <span className="relative">
                     <IconComp className="w-5 h-5" />
                     {item.key === 'notifikasi' && unreadCount > 0 && (
@@ -2029,6 +2032,15 @@ function App() {
                       <div>
                         <label className="text-xs font-medium text-slate-500">Nominal Tagihan (Rp)</label>
                         <input type="number" min="0" value={kegiatanForm.nominal} onChange={function (e) { setKegiatanForm(Object.assign({}, kegiatanForm, { nominal: Number(e.target.value) || 0 })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm" />
+                      </div>
+                    )}
+                    {kegiatanForm.jenisInfo === 'Tagihan' && (
+                      <div>
+                        <label className="text-xs font-medium text-slate-500">Untuk</label>
+                        <select value={kegiatanForm.targetWargaId} onChange={function (e) { setKegiatanForm(Object.assign({}, kegiatanForm, { targetWargaId: e.target.value })); }} className="w-full mt-1 px-3 py-2.5 border border-slate-200 rounded-xl text-sm">
+                          <option value="">Semua Warga</option>
+                          {wargaList.map(function (w) { return <option key={w.id} value={w.id}>{w.namaKK}</option>; })}
+                        </select>
                       </div>
                     )}
                     <div>
